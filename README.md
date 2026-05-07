@@ -277,9 +277,9 @@ Ejemplo básico:
 ---
 
 # 👨‍💻 Autores
-- Artem Zatsarnyi. [@ArtemZat][https://www.github.com/artemzat]
-- Daniel García. [@chopox][https://www.github.com/chopox]
-- Iván Gámez. [@ivangamezc][https://www.github.com/ivangamezc]
+- Artem Zatsarnyi. [@ArtemZat](https://www.github.com/artemzat)
+- Daniel García. [@chopox](https://www.github.com/chopox)
+- Iván Gámez. [@ivangamezc](https://www.github.com/ivangamezc)
 
 ---
 
