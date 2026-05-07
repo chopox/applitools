@@ -1,19 +1,18 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { Eyes, Target } from '@applitools/eyes-playwright';
+import dotenv from 'dotenv';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+dotenv.config();
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+test('Visual test homepage', async ({ page }) => {
+  const eyes = new Eyes();
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  await eyes.open(page, 'Demo App', 'Homepage Test');
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  await page.goto('https://playwright.dev');
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+  await eyes.check('Homepage', Target.window());
+
+  await eyes.close();
 });
