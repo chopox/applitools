@@ -1,12 +1,16 @@
-// @ts-check
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { Eyes, Target } from '@applitools/eyes-playwright';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 test('Visual test homepage', async ({ page }) => {
+  const apiKey = process.env.APPLITOOLS_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('APPLITOOLS_API_KEY no encontrada');
+  }
+
   const eyes = new Eyes();
+
+  eyes.setApiKey(apiKey);
 
   await eyes.open(page, 'Demo App', 'Homepage Test');
 
