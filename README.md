@@ -1,4 +1,3 @@
-````markdown
 # 👁️ Pruebas de Validación Visual con Applitools Eyes + Playwright
 
 Repositorio de formación práctica sobre **testing visual automatizado** utilizando **Applitools Eyes** integrado con **Playwright**.
@@ -287,4 +286,3 @@ Ejemplo básico:
 # 📄 Licencia
 
 Este proyecto puede utilizarse con fines educativos y de formación técnica.
-````
