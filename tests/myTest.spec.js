@@ -24,23 +24,18 @@ test.describe('SauceDemo Advanced Visual AI', () => {
             const eyes = new Eyes(runner);
 
             const config = new Configuration(applitoolsConfig);
-            config.setMatchLevel(MatchLevel.Strict); 
+            config.setMatchLevel(MatchLevel.Strict);
+            config.setBatch({ name: 'SauceDemo E2E Visual Tests', id: process.env.APPLITOOLS_BATCH_ID }); 
             eyes.setConfiguration(config);
 
             try {
                 await eyes.open(page, 'SauceDemo', `Usuario: ${user}`);
 
                 await sauceDemo.goto();
-                
-                // 1. Login Page
                 await eyes.check('Login Page', Target.window().fully());
 
                 await sauceDemo.authentificate(user, password);
-
-                // 2. Página principal (Uso de regiones con sintaxis simplificada)
-                // Si el error persiste aquí, el problema es que el SDK no detecta el elemento aún.
                 await page.waitForSelector('.inventory_list'); 
-                
                 await eyes.check('Página principal', Target.window()
                     .fully()
                     .ignoreRegions('.shopping_cart_link')
@@ -48,8 +43,6 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 );
 
                 await sauceDemo.elegirFiltro("za");
-                
-                // 3. Filtro
                 await eyes.check("Filtro Z a A", Target.window()
                     .fully()
                     .matchLevel(MatchLevel.IgnoreColors)
@@ -58,9 +51,18 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 await sauceDemo.goToCart();
                 await sauceDemo.clickCheckout();
                 await sauceDemo.writeInfoPerson("John", "Doe", "12345");
-                
-                // 4. Datos Personales
                 await eyes.check("Datos Personales", Target.window().fully());
+
+                await sauceDemo.clickContinue();
+                await eyes.check("Datos finales de compra", Target.window().fully());
+
+                await sauceDemo.clickFinish();
+                await eyes.check("Felicidades por la compra", Target.window().fully());
+
+                await sauceDemo.clickBackHome();
+                await sauceDemo.clickBurgerMenu();
+                await eyes.check("Burger menu abierto", Target.window().fully());
+
 
                 await eyes.close(false);
             } catch (error) {
