@@ -37,8 +37,8 @@ test.describe('SauceDemo Advanced Visual AI', () => {
 
                 await eyes.check('Página principal', Target.window()
                     .fully()
-                    .ignoreRegions({ selector: '.shopping_cart_link' })
-                    .layoutRegions({ selector: '.inventory_list' })
+                    .ignoreRegions('.shopping_cart_link')
+                    .layoutRegions('.inventory_list')
                 );
 
                 await sauceDemo.elegirFiltro("za");
@@ -53,7 +53,7 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 
                 await eyes.check("Datos Personales", Target.window()
                     .fully()
-                    .floatingRegions({ selector: '.checkout_info' }, 5, 5, 5, 5)
+                    .floatingRegions('.checkout_info', 5, 5, 5, 5)
                 );
 
                 await eyes.close(false);
