@@ -1,11 +1,13 @@
 require('dotenv').config();
-
 const { test } = require('@playwright/test');
 const { Eyes, Target, VisualGridRunner, Configuration, BrowserType, BatchInfo, DeviceName } = require('@applitools/eyes-playwright');
+// 1. Importamos el POM de Artem
+const { SauceDemo } = require('../../pages/SauceDemo'); 
 
 test.describe('Suite de Pruebas Visuales - Menú Lateral', () => {
   let eyes;
   let runner;
+  let sauceDemo; // 2. Variable para el POM
 
   test.beforeAll(async () => {
     runner = new VisualGridRunner({ testConcurrency: 5 });
@@ -24,23 +26,23 @@ test.describe('Suite de Pruebas Visuales - Menú Lateral', () => {
   });
 
   test.beforeEach(async ({ page }, testInfo) => {
+    // 3. Inicializamos el POM pasándole la página
+    sauceDemo = new SauceDemo(page); 
     await eyes.open(page, 'SauceDemo App', testInfo.title);
   });
 
   test('Prueba Visual 4: Despliegue del menú lateral', async ({ page }) => {
-    // 1. Navegamos y hacemos login
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
+    // 4. Usamos los métodos de Artem para navegar y login
+    await sauceDemo.goto();
+    await sauceDemo.authentificate('standard_user', 'secret_sauce');
     
-    // 2. Hacemos clic en el icono del menú hamburguesa (arriba a la izquierda)
-    await page.locator('#react-burger-menu-btn').click();
+    // 5. Usamos el método específico del menú que creó Artem
+    await sauceDemo.clickBurgerMenu();
     
-    // Esperamos medio segundo para que la animación del menú termine de abrirse
+    // Un pequeño respiro para la animación
     await page.waitForTimeout(500); 
     
-    // 3. Capturamos la pantalla con el menú desplegado
+    // 6. Captura visual de Applitools
     await eyes.check('Menú Hamburguesa Desplegado', Target.window().fully());
   });
 
@@ -50,6 +52,6 @@ test.describe('Suite de Pruebas Visuales - Menú Lateral', () => {
 
   test.afterAll(async () => {
     await runner.getAllTestResults(false);
-    console.log('✅ Ejecución completada. Test del Menú Lateral enviado.');
+    console.log('✅ Ejecución completada. Test del Menú Lateral con POM enviado.');
   });
 });

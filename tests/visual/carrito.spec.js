@@ -2,36 +2,40 @@ require('dotenv').config();
 const { test } = require('@playwright/test');
 const { Eyes, Target, VisualGridRunner, Configuration, BrowserType, BatchInfo } = require('@applitools/eyes-playwright');
 
-test.describe('Prueba Carrito - Validacion Simple', () => {
+const { SauceDemo } = require('../../pages/SauceDemo'); 
+
+test.describe('Prueba Carrito - Validacion POM', () => {
   let eyes;
   let runner;
+  let sauceDemo; 
 
   test.beforeAll(async () => {
-    runner = new VisualGridRunner({ testConcurrency: 1 }); // Solo 1 para no saturar
+    runner = new VisualGridRunner({ testConcurrency: 1 });
     const config = new Configuration();
-    config.setBatch(new BatchInfo('Validacion Carrito Solo Chrome'));
+    config.setBatch(new BatchInfo('Validacion Carrito con POM')); // Cambiado para diferenciarlo
     config.setApiKey(process.env.APPLITOOLS_API_KEY);
-    config.addBrowser(1280, 800, BrowserType.CHROME); // Solo un navegador
+    config.addBrowser(1280, 800, BrowserType.CHROME);
     eyes = new Eyes(runner, config);
   });
 
   test.beforeEach(async ({ page }, testInfo) => {
+    
+    sauceDemo = new SauceDemo(page); 
     await eyes.open(page, 'SauceDemo', testInfo.title);
   });
 
   test('Interfaz del carrito', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    await page.fill('#user-name', 'standard_user');
-    await page.fill('#password', 'secret_sauce');
-    await page.click('#login-button');
-    await page.click('.shopping_cart_link');
     
+    await sauceDemo.goto(); 
+    await sauceDemo.authentificate('standard_user', 'secret_sauce');
+    await sauceDemo.goToCart();
+   
     await eyes.check('Vista Carrito', Target.window().fully());
   });
 
   test.afterEach(async () => { await eyes.closeAsync(); });
   test.afterAll(async () => { 
     await runner.getAllTestResults(false); 
-    console.log('🚀 Test enviado correctamente');
+    console.log('🚀 Test con POM enviado correctamente');
   });
 });
