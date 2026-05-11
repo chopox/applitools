@@ -75,5 +75,6 @@ test.describe('SauceDemo Advanced Visual AI', () => {
     test.afterAll(async () => {
         await runner.getAllTestResults(false);
         console.log('Resultados procesados en Applitools.');
+        throw error;
     });
 });
