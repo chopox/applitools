@@ -37,8 +37,8 @@ test.describe('SauceDemo Advanced Visual AI', () => {
 
                 await eyes.check('Página principal', Target.window()
                     .fully()
-                    .ignoreRegions('.shopping_cart_link')
-                    .layoutRegions('.inventory_list')
+                    .ignoreRegions({ selector: '.shopping_cart_link' })
+                    .layoutRegions({ selector: '.inventory_list' })
                 );
 
                 await sauceDemo.elegirFiltro("za");
@@ -53,7 +53,7 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 
                 await eyes.check("Datos Personales", Target.window()
                     .fully()
-                    .floatingRegions('.checkout_info', 5, 5, 5, 5)
+                    .floatingRegions({ selector: '.checkout_info' }, 5, 5, 5, 5)
                 );
 
                 await eyes.close(false);
@@ -65,7 +65,7 @@ test.describe('SauceDemo Advanced Visual AI', () => {
     }
 
     test.afterAll(async () => {
-        const resultsSummary = await runner.getAllTestResults(false);
+        await runner.getAllTestResults(false);
         console.log('Resultados procesados en Applitools.');
     });
 });
