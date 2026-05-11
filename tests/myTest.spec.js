@@ -31,10 +31,16 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 await eyes.open(page, 'SauceDemo', `Usuario: ${user}`);
 
                 await sauceDemo.goto();
+                
+                // 1. Login Page
                 await eyes.check('Login Page', Target.window().fully());
 
                 await sauceDemo.authentificate(user, password);
 
+                // 2. Página principal (Uso de regiones con sintaxis simplificada)
+                // Si el error persiste aquí, el problema es que el SDK no detecta el elemento aún.
+                await page.waitForSelector('.inventory_list'); 
+                
                 await eyes.check('Página principal', Target.window()
                     .fully()
                     .ignoreRegions('.shopping_cart_link')
@@ -42,6 +48,8 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 );
 
                 await sauceDemo.elegirFiltro("za");
+                
+                // 3. Filtro
                 await eyes.check("Filtro Z a A", Target.window()
                     .fully()
                     .matchLevel(MatchLevel.IgnoreColors)
@@ -51,10 +59,8 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 await sauceDemo.clickCheckout();
                 await sauceDemo.writeInfoPerson("John", "Doe", "12345");
                 
-                await eyes.check("Datos Personales", Target.window()
-                    .fully()
-                    .floatingRegions('.checkout_info', 5, 5, 5, 5)
-                );
+                // 4. Datos Personales
+                await eyes.check("Datos Personales", Target.window().fully());
 
                 await eyes.close(false);
             } catch (error) {
