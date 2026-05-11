@@ -35,7 +35,8 @@ test.describe('SauceDemo Advanced Visual AI', () => {
                 await eyes.check('Login Page', Target.window().fully());
 
                 await sauceDemo.authentificate(user, password);
-                await page.waitForSelector('.inventory_list'); 
+                await eyes.check('Estado Post-Login', Target.window().fully());
+                await page.waitForSelector('.inventory_list', { timeout: 5000 }); 
                 await eyes.check('Página principal', Target.window()
                     .fully()
                     .ignoreRegions('.shopping_cart_link')
