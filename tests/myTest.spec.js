@@ -69,6 +69,7 @@ test.describe('SauceDemo Advanced Visual AI', () => {
             } catch (error) {
                 console.error(`Error detectado en ${user}:`, error.message);
                 await eyes.abort();
+                throw error;
             }
         });
     }
@@ -76,6 +77,5 @@ test.describe('SauceDemo Advanced Visual AI', () => {
     test.afterAll(async () => {
         await runner.getAllTestResults(false);
         console.log('Resultados procesados en Applitools.');
-        throw error;
     });
 });
