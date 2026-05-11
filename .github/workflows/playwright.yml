@@ -3,17 +3,17 @@ name: Playwright + Applitools Tests
 on:
   push:
     branches: [main]
-
   pull_request:
     branches: [main]
 
 jobs:
   test:
-    timeout-minutes: 15
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     env:
       APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+      APPLITOOLS_BATCH_ID: ${{ github.run_id }}
 
     steps:
       - name: Checkout repository
@@ -25,22 +25,16 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright Browser
+        run: npx playwright install chromium --with-deps
 
-      - name: Install Chromium only
-        run: npx playwright install
-
-      - name: Run Playwright tests
+      - name: Run Playwright Tests
         run: npx playwright test
 
-      - name: Upload Playwright report
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

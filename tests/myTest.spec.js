@@ -1,10 +1,7 @@
 import { SauceDemo } from '../pages/SauceDemo';
-require('dotenv').config();
+const { test } = require('@playwright/test');
+const { Eyes, Target, VisualGridRunner, Configuration } = require('@applitools/eyes-playwright');
 
-const { test, expect } = require('@playwright/test');
-const { Eyes, Target } = require('@applitools/eyes-playwright');
-
-// Credenciales de Usuarios de SauceDemo
 const users = [
     "standard_user",
     "locked_out_user",
@@ -15,65 +12,70 @@ const users = [
 ];
 const password = "secret_sauce";
 
-// Configuración de Applitools
-const BASELINE_BRANCH = "main";
-const TEST_BRANCH = "ci-tests";
+// Runner para el Ultrafast Grid
+const runner = new VisualGridRunner({ testConcurrency: 5 });
 
-for (const user of users) {
+test.describe('SauceDemo Visual AI', () => {
+    let eyes;
 
-    test('SauceDemo ' + user, async ({ page }) => {
-    
-    const sauceDemo = new SauceDemo(page);
-    const eyes = new Eyes();
-    const isBaseline = user === "standard_user";
+    for (const user of users) {
+        test(`SauceDemo ${user}`, async ({ page }) => {
+            const sauceDemo = new SauceDemo(page);
+            eyes = new Eyes(runner);
 
-    eyes.setApiKey(process.env.APPLITOOLS_API_KEY);
+            // Configuramos la rama dinámicamente si es necesario
+            const configuration = new Configuration();
+            if (user !== "standard_user") {
+                configuration.setBranchName("ci-tests");
+                configuration.setParentBranchName("main");
+            }
+            eyes.setConfiguration(configuration);
 
-    await eyes.open(
-        page,
-        'SauceDemo',
-        'Prueba visual de SauceDemo',
-        {
-            branchName: isBaseline ? BASELINE_BRANCH : TEST_BRANCH,
-            parentBranchName: BASELINE_BRANCH,
-        }
-    );
+            await eyes.open(
+                page,
+                'SauceDemo',
+                `Prueba visual de SauceDemo - Usuario: ${user}`
+            );
 
-    await sauceDemo.goto();
+            await sauceDemo.goto();
+            await eyes.check('Login Page', Target.window().fully());
 
-    await eyes.check('Login Page', Target.window().fully());
+            await sauceDemo.authentificate(user, password);
+            await eyes.check('Página principal', Target.window().fully());
 
-    await sauceDemo.authentificate(user, password);
+            await sauceDemo.elegirFiltro("za");
+            await eyes.check("Filtro de Z a A", Target.window().fully());
 
-    await eyes.check('Página principal', Target.window().fully());
+            await sauceDemo.elegirFiltro("lohi");
+            await eyes.check("Filtro de menor a mayor", Target.window().fully());
 
-    await sauceDemo.elegirFiltro("za");
-    await eyes.check("Filtro de Z a A", Target.window().fully());
+            await sauceDemo.elegirFiltro("hilo");
+            await eyes.check("Filtro de mayor a menor", Target.window().fully());
 
-    await sauceDemo.elegirFiltro("lohi");
-    await eyes.check("Filtro de menor a mayor", Target.window().fully());
+            await sauceDemo.goToCart();
+            await eyes.check("Cesta", Target.window().fully());
 
-    await sauceDemo.elegirFiltro("hilo");
-    await eyes.check("Filtro de mayor a menor", Target.window().fully());
+            await sauceDemo.clickCheckout();
+            await sauceDemo.writeInfoPerson("1111","2222","3333");
+            await eyes.check("Datos personales", Target.window().fully());
 
-    await sauceDemo.goToCart();
-    await eyes.check("Cesta", Target.window().fully());
+            await sauceDemo.clickContinue();
+            await eyes.check("Datos finales de compra", Target.window().fully());
 
-    await sauceDemo.clickCheckout();
-    await sauceDemo.writeInfoPerson("1111","2222","3333");
-    await eyes.check("Datos personales", Target.window().fully());
+            await sauceDemo.clickFinish();
+            await eyes.check("Felicidades por compra", Target.window().fully());
 
-    await sauceDemo.clickContinue();
-    await eyes.check("Datos finales de compra", Target.window().fully());
+            await sauceDemo.clickBackHome();
+            await sauceDemo.clickBurgerMenu();
+            await eyes.check("Burger menu abierto", Target.window().fully());
+            
+            await eyes.close(false);
+        });
+    }
 
-    await sauceDemo.clickFinish();
-    await eyes.check("Felicidades por compra", Target.window().fully());
-
-    await sauceDemo.clickBackHome();
-    await sauceDemo.clickBurgerMenu();
-    await eyes.check("Burger menu abierto", Target.window().fully());
-    
-    await eyes.close(false);
-
+    test.afterAll(async () => {
+        // Espera a que todos los resultados del Grid se procesen
+        const resultsSummary = await runner.getAllTestResults();
+        console.log(resultsSummary);
     });
-}
+});
