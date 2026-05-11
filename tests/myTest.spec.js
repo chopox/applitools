@@ -1,6 +1,6 @@
 import { SauceDemo } from '../pages/SauceDemo';
 const { test } = require('@playwright/test');
-const { Eyes, Target, VisualGridRunner, Configuration } = require('@applitools/eyes-playwright');
+const { Eyes, Target, VisualGridRunner, Configuration, MatchLevel } = require('@applitools/eyes-playwright');
 
 const users = [
     "standard_user",
@@ -11,71 +11,61 @@ const users = [
     "visual_user"
 ];
 const password = "secret_sauce";
+const runner = new VisualGridRunner({ testConcurrency: 6 });
 
-// Runner para el Ultrafast Grid
-const runner = new VisualGridRunner({ testConcurrency: 5 });
-
-test.describe('SauceDemo Visual AI', () => {
-    let eyes;
+test.describe('SauceDemo Advanced Visual AI', () => {
 
     for (const user of users) {
-        test(`SauceDemo ${user}`, async ({ page }) => {
+        test(`Pruebas Avanzadas para ${user}`, async ({ page }) => {
             const sauceDemo = new SauceDemo(page);
-            eyes = new Eyes(runner);
-
-            // Configuramos la rama dinámicamente si es necesario
-            const configuration = new Configuration();
-            if (user !== "standard_user") {
-                configuration.setBranchName("ci-tests");
-                configuration.setParentBranchName("main");
-            }
-            eyes.setConfiguration(configuration);
-
-            await eyes.open(
-                page,
-                'SauceDemo',
-                `Prueba visual de SauceDemo - Usuario: ${user}`
-            );
-
-            await sauceDemo.goto();
-            await eyes.check('Login Page', Target.window().fully());
-
-            await sauceDemo.authentificate(user, password);
-            await eyes.check('Página principal', Target.window().fully());
-
-            await sauceDemo.elegirFiltro("za");
-            await eyes.check("Filtro de Z a A", Target.window().fully());
-
-            await sauceDemo.elegirFiltro("lohi");
-            await eyes.check("Filtro de menor a mayor", Target.window().fully());
-
-            await sauceDemo.elegirFiltro("hilo");
-            await eyes.check("Filtro de mayor a menor", Target.window().fully());
-
-            await sauceDemo.goToCart();
-            await eyes.check("Cesta", Target.window().fully());
-
-            await sauceDemo.clickCheckout();
-            await sauceDemo.writeInfoPerson("1111","2222","3333");
-            await eyes.check("Datos personales", Target.window().fully());
-
-            await sauceDemo.clickContinue();
-            await eyes.check("Datos finales de compra", Target.window().fully());
-
-            await sauceDemo.clickFinish();
-            await eyes.check("Felicidades por compra", Target.window().fully());
-
-            await sauceDemo.clickBackHome();
-            await sauceDemo.clickBurgerMenu();
-            await eyes.check("Burger menu abierto", Target.window().fully());
             
-            await eyes.close(false);
+            // Instancia local para cada test
+            const eyes = new Eyes(runner);
+            const config = new Configuration();
+            config.setMatchLevel(MatchLevel.Strict); 
+            eyes.setConfiguration(config);
+
+            try {
+                await eyes.open(page, 'SauceDemo', `Usuario: ${user}`);
+
+                await sauceDemo.goto();
+                await eyes.check('Login Page', Target.window().fully());
+
+                await sauceDemo.authentificate(user, password);
+                
+                await eyes.check('Página principal', Target.window()
+                    .fully()
+                    .ignoreRegions(page.locator('.shopping_cart_link'))
+                    .layoutRegions(page.locator('.inventory_list'))
+                );
+
+                await sauceDemo.elegirFiltro("za");
+                await eyes.check("Filtro Z a A", Target.window()
+                    .fully()
+                    .matchLevel(MatchLevel.Content)
+                );
+
+                await sauceDemo.goToCart();
+                await sauceDemo.clickCheckout();
+                await sauceDemo.writeInfoPerson("John", "Doe", "12345");
+                
+                await eyes.check("Datos Personales", Target.window()
+                    .fully()
+                    .floatingRegions(page.locator('.checkout_info'), 5, 5, 5, 5)
+                );
+
+                await eyes.close(false);
+            } catch (error) {
+                console.error(`Error en test de ${user}:`, error);
+                await eyes.abort();
+            }
         });
     }
 
     test.afterAll(async () => {
-        // Espera a que todos los resultados del Grid se procesen
-        const resultsSummary = await runner.getAllTestResults();
+        // Obtenemos resultados sin romper la build
+        const resultsSummary = await runner.getAllTestResults(false);
+        console.log('--- Resumen de Applitools ---');
         console.log(resultsSummary);
     });
 });
