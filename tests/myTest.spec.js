@@ -3,6 +3,8 @@ require('dotenv').config();
 
 const { test, expect } = require('@playwright/test');
 const { Eyes, Target } = require('@applitools/eyes-playwright');
+
+// Credenciales de Usuarios de SauceDemo
 const users = [
     "standard_user",
     "locked_out_user",
@@ -13,17 +15,28 @@ const users = [
 ];
 const password = "secret_sauce";
 
+// Configuración de Applitools
+const BASELINE_BRANCH = "main";
+const TEST_BRANCH = "ci-tests";
+
 for (const user of users) {
+
     test('SauceDemo ' + user, async ({ page }) => {
     
     const sauceDemo = new SauceDemo(page);
     const eyes = new Eyes();
+    const isBaseline = user === "standard_user";
+
     eyes.setApiKey(process.env.APPLITOOLS_API_KEY);
 
     await eyes.open(
         page,
         'SauceDemo',
-        'Prueba visual de SauceDemo con usuario ' + user
+        'Prueba visual de SauceDemo',
+        {
+            branchName: isBaseline ? BASELINE_BRANCH : TEST_BRANCH,
+            parentBranchName: BASELINE_BRANCH,
+        }
     );
 
     await sauceDemo.goto();
