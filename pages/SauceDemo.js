@@ -119,6 +119,26 @@ class SauceDemo {
     await expect(link).toHaveAttribute('href', url);
   }
 
+  async obtenerPreciosProductos() {
+    // Retorna todos los textos de precios para validaciones matemáticas
+    return await this.page.locator('.inventory_item_price').allInnerTexts();
+  }
+
+  async obtenerBadgeCarrito() {
+    // Retorna el locator del globo rojo contador del carrito
+    return this.page.locator('.shopping_cart_badge');
+  }
+
+  async obtenerBotonRemoveEspecifico(product) {
+    // Retorna el botón remove de un producto específico
+    return this.page.locator('[data-test="inventory-item"]').filter({hasText: product}).getByRole('button', { name: /remove/i});
+  }
+
+  async obtenerContenedorExito() {
+    // Retorna el contenedor de la pantalla final para validar que el DOM renderizó el éxito
+    return this.page.locator('#checkout_complete_container');
+  }
+
 }
 
 module.exports = { SauceDemo };
