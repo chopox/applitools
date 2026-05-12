@@ -1,12 +1,16 @@
 import { test } from '@applitools/eyes-playwright/fixture'
 const { Arteza } = require('../pages/Arteza.js');
 
-test('Arteza', async ({ page, eyes }) => {
+test('Arteza Main Flow', async ({ page, eyes }) => {
   const arteza = new Arteza(page);
-  await arteza.goto();
-  await eyes.open(page, 'Arteza');
   
-  await eyes.check('Página principal')
+  const config = eyes.getConfiguration();
+  config.setBatch({ name: 'Arteza E2E Visual Tests' });
+  eyes.setConfiguration(config);
+  await eyes.open(page, 'Arteza');
+
+  await arteza.goto();
+  await eyes.check('Página principal');
 
   const postLinks = page.getByRole('main', { name: 'Main Content' }).getByRole('link');
 
@@ -14,18 +18,16 @@ test('Arteza', async ({ page, eyes }) => {
 
   for (let i = 0; i < count; i++) {
     const currentPost = postLinks.nth(i);
-    const title = await currentPost.innerText(); // Запоминаем название для отчета
+    const title = await currentPost.innerText();
 
     await test.step(`Comprobasión de post: ${title}`, async () => {
       await currentPost.click();
 
       await page.waitForLoadState('networkidle');
-//      await page.waitForTimeout(1000);
-
-//      await eyes.check(`Post: ${title}`, Target.window().layout())
+      
       await eyes.check(`Post: ${title}`)
 
-      await page.goBack(); // Возвращаемся в список для следующей итерации
+      await page.goBack();
     });
   }
 
