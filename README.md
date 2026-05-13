@@ -120,10 +120,10 @@ Desarrollar una suite automatizada completa capaz de validar una aplicación web
 # 📊 Checklist Final de Verificación
 
 Para garantizar el éxito de la implementación, asegúrate de cumplir con:
-- [ ] **SDK Integrado:** Instalado y configurado mediante fixtures.
-- [ ] **Baseline Creado:** Referencia visual inicial aprobada en el Dashboard.
-- [ ] **CI Funcionando:** Pipeline ejecutando tests automáticamente en cada commit.
-- [ ] **Regiones Configuradas:** Áreas dinámicas excluidas para 0 falsos positivos.
+- [x] **SDK Integrado:** Instalado y configurado mediante fixtures.
+- [x] **Baseline Creado:** Referencia visual inicial aprobada en el Dashboard.
+- [x] **CI Funcionando:** Pipeline ejecutando tests automáticamente en cada commit.
+- [x] **Regiones Configuradas:** Áreas dinámicas excluidas para 0 falsos positivos.
 
 ---
 
