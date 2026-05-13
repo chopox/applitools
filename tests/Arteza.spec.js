@@ -17,7 +17,6 @@ const runner = new VisualGridRunner({ testConcurrency: 15 });
 const batch = new BatchInfo('Arteza E2E - Split Platforms');
 
 test.describe('Pruebas Visuales Arteza', () => {
-
     // Comprobación: Si no habrá API KEY, sale un error en lenguaje humano.
     if (!process.env.APPLITOOLS_API_KEY) {
         throw new Error('ERROR: APPLITOOLS_API_KEY no encontrado en process.env. Comprueba fichero .env');
