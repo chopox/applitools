@@ -8,150 +8,100 @@ Este proyecto está orientado a aprender cómo detectar cambios visuales reales 
 
 # 📚 Información General
 
-- **Duración:** 16 horas
-- **Framework Base:** Playwright (Node.js)
-- **Lenguaje:** TypeScript / JavaScript
-- **Motor de IA Visual:** Applitools Eyes SDK
-- **Ejecución Cross-Browser:** Applitools Ultrafast Grid
-- **Reportes:** Applitools Test Results Dashboard
-- **Infraestructura:** Docker / CI-CD Runners
+- **Duración:** 16 horas.
+- **Framework Base:** Playwright (Node.js).
+- **Lenguaje:** TypeScript / JavaScript.
+- **Motor de IA Visual:** Applitools Eyes SDK.
+- **Ejecución Cross-Browser:** Applitools Ultrafast Test Grid.
+- **Reportes:** Applitools Test Results Dashboard.
+- **Infraestructura:** Docker / CI-CD Runners.
 
 ---
 
 # 🎯 Objetivos del Curso
 
 - Comprender el funcionamiento de la **Visual AI** y su diferencia frente a la comparación tradicional por píxeles.
-- Integrar **Applitools Eyes SDK** en un proyecto Playwright existente.
-- Gestionar **baselines visuales** desde el Dashboard de Applitools.
-- Ejecutar pruebas visuales en múltiples navegadores y dispositivos utilizando **Ultrafast Grid**.
-- Reducir falsos positivos mediante regiones de ignorancia y selectores visuales.
-
----
-
-# 🧠 ¿Qué es la Validación Visual?
-
-Las aserciones tradicionales permiten validar comportamiento funcional:
-
-```ts
-await expect(locator).toBeVisible();
-```
-
-Sin embargo, no detectan:
-
-- Desalineaciones visuales
-- Problemas de responsive design
-- Cambios de estilos
-- Solapamientos de elementos
-- Errores de renderizado
-
-Applitools utiliza **Visual AI** para analizar la interfaz de forma similar a cómo lo haría una persona.
+- Integrar **Applitools Eyes SDK** en un proyecto Playwright existente mediante el uso de **Fixtures**.
+- Gestionar **baselines visuales** y flujos de aprobación desde el Dashboard.
+- Ejecutar pruebas visuales masivas en paralelo utilizando **Ultrafast Test Grid**.
+- Aplicar estrategias avanzadas de reducción de falsos positivos mediante regiones inteligentes y distintos **Match Levels**.
 
 ---
 
 # 🏗️ Estructura del Curso
 
-## 📦 Módulo 1 — Introducción a la Validación Visual
+## 📦 Módulo 1 — Introducción y Arquitectura
 
 ### Contenidos
-
-- Limitaciones de las aserciones tradicionales
-- Flujo de funcionamiento de Applitools:
-  - Captura
-  - Subida
-  - Comparación
-  - Reporte
-- Configuración de:
-  - API Key
-  - Variables de entorno
-
-### Conceptos clave
-
-- Visual Testing
-- Baselines
-- Visual AI
-- Detección inteligente de cambios
+- Limitaciones del Pixel Diff tradicional (Anti-aliasing, renderizado de fuentes).
+- Arquitectura del sistema:
+  - **Eyes SDK:** Captura y comunicación.
+  - **Ultrafast Test Grid:** Renderizado paralelo en la nube.
+  - **Cloud Engine:** Motor de IA y comparación de baselines.
+- Configuración de API Key y variables de entorno.
 
 ---
 
 ## ⚙️ Módulo 2 — Integración con Playwright
 
-### Instalación del SDK
+### Implementación Profesional: Fixtures
+Uso de Playwright Fixtures para abstraer el boilerplate y gestionar automáticamente el ciclo de vida (open, check, close).
 
-```bash
-npm install @applitools/eyes-playwright
-```
+```typescript
+import { test } from '@applitools/eyes-playwright/fixture';
 
-### Ciclo de vida básico
-
-```ts
-await eyes.open(page, 'Demo App', 'Visual Test');
-
-await eyes.check('Home Page');
-
-await eyes.close();
+test('Login Page Validation', async ({ page, eyes }) => {
+await page.goto('/login');
+await eyes.check('Login Screen', Target.window().fully());
+});
 ```
 
 ### Temas cubiertos
-
-- `eyes.open()`
-- `eyes.check()`
-- `eyes.close()`
-- Full Page Screenshots
-- Captura de elementos específicos
+- Capturas **Full Page** vs **Region-Based**.
+- Snapshot de DOM: Envío de activos a la nube para renderizado estable.
 
 ---
 
-## 🖥️ Módulo 3 — Dashboard y Match Levels
+## 🖥️ Módulo 3 — Match Levels y Root Cause Analysis (RCA)
 
-### Dashboard de Applitools
+### Match Levels Avanzados
+- **Strict (Default):** Tolerancia inteligente a variaciones de renderizado.
+- **Content:** Valida estructura e información ignorando estilos.
+- **Layout:** Ideal para contenido dinámico y grids responsivos.
 
-Aprenderás a:
+### Root Cause Analysis (RCA)
+Diagnóstico a nivel de DOM para identificar exactamente qué regla CSS o elemento HTML causó el cambio visual, eliminando el tiempo de "adivinar" fallos en la maqueta.
 
-- Analizar resultados visuales
-- Diferenciar bugs reales de cambios esperados
-- Aprobar o rechazar cambios visuales
-
-### Match Levels
-
-| Nivel | Descripción |
-|---|---|
-| Exact | Comparación exacta por píxeles |
-| Strict | Nivel recomendado por defecto |
-| Content | Ignora diferencias menores de estilo |
-| Layout | Compara únicamente estructura/layout |
-
-### Uso de regiones
-
-- Ignore Regions
-- Floating Regions
-- Coded Regions
+### Regiones Inteligentes
+- **Ignore Regions:** Exclusión de anuncios o timestamps.
+- **Floating Regions:** Tolerancia a pequeños desplazamientos de elementos.
+- **Coded Regions:** Definición programática de áreas de exclusión.
 
 ---
 
-## 🚀 Módulo 4 — Escalabilidad con Ultrafast Grid
+## 🚀 Módulo 4 — Escalabilidad con Ultrafast Test Grid (UTG)
 
-### Configuración
-
-```js
-module.exports = {
-  testConcurrency: 5,
-  apiKey: process.env.APPLITOOLS_API_KEY,
-  browser: [
-    { width: 1920, height: 1080, name: 'chrome' },
-    { width: 768, height: 1024, name: 'firefox' },
-    { deviceName: 'iPhone X' }
-  ]
-};
-```
+### UTG vs. Ejecución Local
+Mientras la ejecución local depende de la CPU y recursos del runner, el **Ultrafast Test Grid** renderiza en paralelo en múltiples navegadores/dispositivos reduciendo el tiempo hasta en un 90%.
 
 ### Contenidos
+- Configuración de browser y viewports (Desktop, Tablet, Mobile).
+- Gestión de **Batches** para agrupar resultados de ejecución.
+- Integración en Pipelines (GitHub Actions, Jenkins).
 
-- Ejecución paralela
-- Responsive testing
-- Desktop / Tablet / Mobile
-- Integración CI/CD
-  - GitHub Actions
-  - Jenkins
+---
+
+# 🚀 Workshops & Challenge Final
+
+El curso incluye actividades prácticas diseñadas para escenarios reales:
+
+- **Workshop 1:** Primer checkpoint visual y creación de baseline inicial.
+- **Workshop 2:** Detección de bugs visuales reales mediante distintos Match Levels.
+- **Workshop 3:** Eliminación de falsos positivos usando Ignore y Floating Regions.
+- **Workshop 4:** Construcción de una Pipeline Visual Enterprise con GitHub Actions.
+
+### 🏆 LAB FINAL: Enterprise Challenge
+Desarrollar una suite automatizada completa capaz de validar una aplicación web responsive, gestionando baselines y ejecutando validaciones paralelas en **Applitools Ultrafast Test Grid** integradas en CI/CD.
 
 ---
 
@@ -162,117 +112,18 @@ module.exports = {
 | Framework E2E | Playwright |
 | Motor Visual AI | Applitools Eyes |
 | Cloud Execution | Applitools Ultrafast Grid |
-| Lenguaje | TypeScript / JavaScript |
-| Reportes | Applitools Dashboard |
-| Infraestructura | Docker / CI-CD |
+| Debugging | Root Cause Analysis (RCA) |
+| Infraestructura | Docker & CI/CD Runners |
 
 ---
 
-# 📂 Requisitos Previos
+# 📊 Checklist Final de Verificación
 
-Antes de comenzar es recomendable contar con:
-
-- Node.js 18+
-- npm o yarn
-- Cuenta en Applitools
-- Visual Studio Code
-
-## Para pruebas móviles
-
-### Android
-
-Es indispensable tener:
-
-- Android Studio
-- Emuladores Android configurados
-
-### iOS (Opcional)
-
-Para ejecutar pruebas en iOS se requiere:
-
-- macOS
-- Xcode
-- Simuladores iOS
-
----
-
-# 🔑 Configuración de Variables de Entorno
-
-Crear un archivo `.env`:
-
-```env
-APPLITOOLS_API_KEY=tu_api_key
-```
-
----
-
-# ▶️ Ejecución del Proyecto
-
-## Instalar dependencias
-
-```bash
-npm install
-```
-
-## Ejecutar tests Playwright
-
-```bash
-npx playwright test
-```
-
-## Ejecutar pruebas visuales
-
-```bash
-npx playwright test tests/visual
-```
-
----
-
-# 📊 Resultados y Reportes
-
-Los resultados se visualizarán en:
-
-- Applitools Test Results Dashboard
-- Reportes visuales comparativos
-- Historial de baselines
-- Validaciones cross-browser
-
----
-
-# 🧪 Buenas Prácticas
-
-- Utilizar `Layout Match` para contenido dinámico.
-- Ignorar regiones inestables (ads, timestamps, banners).
-- Mantener baselines actualizados.
-- Ejecutar pruebas visuales en CI/CD.
-- Reducir dependencias de selectores complejos.
-
----
-
-# 🔄 Integración CI/CD
-
-Compatible con:
-
-- GitHub Actions
-- Jenkins
-- Docker Runners
-- Pipelines DevOps
-
-Ejemplo básico:
-
-```yaml
-- name: Run Visual Tests
-  run: npx playwright test
-```
-
----
-
-# 📖 Recursos Recomendados
-
-- Documentación oficial de Playwright
-- Documentación oficial de Applitools
-- Guías de Visual Testing
-- Best Practices de UI Testing
+Para garantizar el éxito de la implementación, asegúrate de cumplir con:
+- [ ] **SDK Integrado:** Instalado y configurado mediante fixtures.
+- [ ] **Baseline Creado:** Referencia visual inicial aprobada en el Dashboard.
+- [ ] **CI Funcionando:** Pipeline ejecutando tests automáticamente en cada commit.
+- [ ] **Regiones Configuradas:** Áreas dinámicas excluidas para 0 falsos positivos.
 
 ---
 
