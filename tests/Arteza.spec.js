@@ -139,5 +139,8 @@ test.describe('Pruebas Visuales Arteza', () => {
     test.afterAll(async () => {
         test.setTimeout(180000); // Asigna tiempo de ejecución máximo
         await runner.getAllTestResults(false); // Espera respuesta de Applitools, si imñagenes son mismos o hay diferencias
+        console.log('\n' + '='.repeat(39));
+        console.log('✅ Test arteza.es enviado correctamente');
+        console.log('='.repeat(39) + '\n');
     });
 });
