@@ -10,7 +10,7 @@ class Arteza {
   }
 
   async goto() {
-    await this.page.goto('https://applitools.arteza.es', { waitUntil: 'networkidle' });
+    await this.page.goto('https://arteza.es', { waitUntil: 'networkidle' });
   }
 }
 module.exports = { Arteza };
