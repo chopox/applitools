@@ -7,7 +7,7 @@ class SauceDemo {
    */
   constructor(page) {
     this.page = page;
-    // Определяем локаторы
+    // Definimos los localizadores
     this.productList = page.locator('.inventory_list')
   }
 
@@ -142,8 +142,3 @@ class SauceDemo {
 }
 
 module.exports = { SauceDemo };
-
-// Puede servir para verificar filtro                                                     inventory_item_name 
-// await page.locator('[data-test="inventory-item"]').nth(1).click();
-// await page.locator('[data-test="inventory-item"]').first().click();
-// await this.page.locator('[data-test="inventory-item"]').first().locator()
