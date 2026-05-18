@@ -28,6 +28,56 @@ Este proyecto está orientado a aprender cómo detectar cambios visuales reales 
 
 ---
 
+# ⚙️ Configuración de entorno
+
+## 1. Instalación de Node.js
+
+Para comenzar, dirígete a la página oficial de descargas de [Node.js](https://nodejs.org/es/download). 
+Selecciona tu sistema operativo, descarga el instalador (por ejemplo, el archivo `.msi` para Windows) y completa el proceso de instalación.
+
+Para verificar que Node.js y su gestor de paquetes (`npm`) se han instalado correctamente, abre tu terminal y ejecuta los siguientes comandos:
+
+```bash
+node -v 
+npm -v
+```
+
+## 2. Instalación de Playwright
+
+Crea un nuevo directorio para tu proyecto, ábrelo en la terminal y ejecuta el siguiente comando para inicializar Playwright:
+
+```bash
+npm init playwright@latest
+```
+
+Durante el asistente de instalación, se te pedirá configurar el proyecto. Te recomendamos las siguientes opciones:
+
+- Lenguaje: TypeScript.
+- Directorio de pruebas: tests (o el de tu preferencia).
+- GitHub Actions: Opcional (elige según las necesidades de tu CI/CD).
+- Navegadores: Confirma la instalación de los navegadores por defecto de Playwright.
+
+## 3. Instalación del SDK de **Applitools**
+
+Para integrar la ejecución de Playwright con el motor de Visual AI, es necesario instalar el paquete oficial de Applitools como dependencia de desarrollo:
+```bash
+npm install -D @applitools/eyes-playwright
+```
+
+## 4. Configuración de Applitools SDK
+
+Finalmente, ejecuta el asistente de configuración para vincular tu entorno local con tu cuenta de Applitools:
+
+```bash
+npx eyes-setup
+```
+
+💡 Nota: Durante este paso necesitarás tu API Key. Para obtenerla, inicia sesión en tu espacio de Applitools, haz clic en el icono de tu perfil (arriba a la derecha) y selecciona "My API Key". Deberás introducir esta clave cuando la consola te lo solicite.
+
+**¡Listo! Ahora tienes configurado el entorno básico para comenzar a validar páginas. 🎉**
+
+---
+
 # 🏗️ Estructura del Curso
 
 ## 📦 Módulo 1 — Introducción y Arquitectura
