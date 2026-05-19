@@ -1,7 +1,7 @@
 import { SauceDemo } from '../pages/SauceDemo';
 const { test } = require('@playwright/test');
 const { Eyes, Target } = require('@applitools/eyes-playwright');
-require('dotenv').config();
+require('dotenv').config(); //npm install dotenv
 
 const user = "standard_user";
 const password = "secret_sauce";
